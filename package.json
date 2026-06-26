@@ -1,0 +1,19 @@
+{
+  "name": "memory-game",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Memory card matching game",
+  "scripts": {
+    "serve": "npx http-server src -p 3000 -c-1",
+    "test": "mocha 'tests/unit/**/*.test.js'",
+    "test:watch": "mocha --watch 'tests/unit/**/*.test.js'",
+    "test:e2e": "mocha 'tests/e2e/**/*.test.js'",
+    "test:all": "npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "chai": "^5.1.0",
+    "http-server": "^14.1.1",
+    "mocha": "^10.4.0",
+    "puppeteer": "^22.0.0"
+  }
+}

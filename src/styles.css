@@ -1,0 +1,387 @@
+:root {
+  --blue-bright: #00c3ff;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: radial-gradient(ellipse at 50% 40%, #0a2351 0%, #020916 70%);
+  font-family: 'Orbitron', 'Arial', sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding: 15px;
+  gap: 6px;
+}
+
+/* z-index: -1 keeps stars and fireworks behind all game elements */
+#bg-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.firework-burst {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffdd55, #ff0000);
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.9);
+}
+
+/* --dx and --dy are set per-burst by JS to give each one a unique radial trajectory */
+@keyframes explode {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.2); }
+  10%  { opacity: 1; transform: translate(0, 0) scale(1.6); }
+  20%  { opacity: 1; transform: translate(0, 0) scale(1.3); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.5); }
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  pointer-events: none;
+  animation: twinkle 5s infinite alternate;
+}
+
+@keyframes twinkle {
+  0%   { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+/* ── Header ─────────────────────────────────────────── */
+
+.title-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+h1.title-glow {
+  font-size: clamp(1.9rem, 6vw, 3.6rem);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  position: relative;
+
+  background: linear-gradient(
+    90deg,
+    #a0cfff 0%,
+    #ffffff 30%,
+    var(--blue-bright) 50%,
+    #ffffff 70%,
+    #a0cfff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  filter: drop-shadow(0 0 8px rgba(0, 195, 255, 0.7))
+          drop-shadow(0 0 20px rgba(93, 128, 255, 0.5));
+
+  animation: shimmer 10s linear infinite, title-pulse 6s ease-in-out infinite alternate;
+}
+
+/* Moves the gradient background leftward continuously to create the shimmer sweep */
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+@keyframes title-pulse {
+  0%   { filter: drop-shadow(0 0 6px rgba(0, 195, 255, 0.6)) drop-shadow(0 0 16px rgba(93, 128, 255, 0.4)); }
+  100% { filter: drop-shadow(0 0 14px rgba(0, 195, 255, 0.95)) drop-shadow(0 0 30px rgba(93, 128, 255, 0.7)); }
+}
+
+.title-underline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.title-underline span {
+  display: block;
+  height: 1px;
+  width: clamp(40px, 8vw, 80px);
+  background: linear-gradient(90deg, transparent, var(--blue-bright));
+}
+
+.title-underline span:last-child {
+  background: linear-gradient(90deg, var(--blue-bright), transparent);
+}
+
+.title-underline em {
+  font-style: normal;
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(0.55rem, 1.4vw, 0.75rem);
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: var(--blue-bright);
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+/* Star-shaped via clip-path, floats and rotates slightly to feel alive */
+.glow-particle {
+  position: absolute;
+  background: #ffffff;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 75%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  box-shadow: 0 0 5px var(--blue-bright), 0 0 10px #ffffff;
+  animation: twinkle 2s infinite alternate, drift 4s infinite ease-in-out;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  50%       { transform: translate(calc(-50% + 8px), calc(-50% - 8px)) rotate(15deg) scale(1.3); }
+}
+
+/* ── Game board ─────────────────────────────────────── */
+
+.game-board {
+  width: min(90vw, 500px);
+  height: min(90vw, 500px);
+  max-width: 500px;
+  max-height: 500px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 12px;
+  background: rgba(8, 25, 65, 0.75);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 195, 255, 0.35);
+  box-shadow:
+    0 0 0 3px rgba(0, 195, 255, 0.08),
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(0, 100, 200, 0.2),
+    inset 0 0 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 16px;
+  touch-action: manipulation;
+  animation: board-breathe 6s ease-in-out infinite alternate;
+}
+
+@keyframes board-breathe {
+  0%   { box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.08), 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 30px rgba(0, 100, 200, 0.2), inset 0 0 40px rgba(0, 0, 0, 0.3); }
+  100% { box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.18), 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 55px rgba(0, 130, 255, 0.35), inset 0 0 40px rgba(0, 0, 0, 0.3); }
+}
+
+/* preserve-3d on the card and backface-visibility: hidden on each face are what make the CSS flip work */
+.memory-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  border-radius: 12px;
+  min-height: 60px;
+}
+
+.memory-card:hover:not(.flip) {
+  transform: scale(1.04);
+}
+
+.memory-card:focus-visible {
+  outline: 3px solid var(--blue-bright);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+.memory-card.flip {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.card-back {
+  background: linear-gradient(135deg, #4a8fd4, #2a65aa);
+  border: 1px solid rgba(0, 195, 255, 0.25);
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background-image:
+    linear-gradient(135deg, #4a8fd4, #2a65aa),
+    repeating-linear-gradient(
+      45deg,
+      rgba(0, 195, 255, 0.04) 0px,
+      rgba(0, 195, 255, 0.04) 1px,
+      transparent 1px,
+      transparent 8px
+    );
+  background-blend-mode: normal;
+}
+
+/* Starts rotated away; .memory-card.flip applies rotateY(180deg) to the parent to bring it forward */
+.card-front {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #4a8fd4, #2a65aa);
+  border: 1px solid rgba(0, 195, 255, 0.3);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+.card-front img,
+.card-back img {
+  max-width: 70%;
+  max-height: 70%;
+  object-fit: contain;
+  filter: invert(1) brightness(1.5);
+}
+
+.card-back img {
+  opacity: 0.5;
+}
+
+/* ── Win notification ───────────────────────────────── */
+
+#win-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90vw, 600px);
+  background: linear-gradient(135deg, rgba(10, 40, 90, 0.96), rgba(20, 65, 130, 0.96), rgba(10, 40, 90, 0.96));
+  border: 1px solid rgba(0, 195, 255, 0.4);
+  box-shadow:
+    0 0 50px rgba(0, 195, 255, 0.25),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+  padding: 36px 60px;
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+  font-family: 'Orbitron', sans-serif;
+  color: #e8f6ff;
+  border-radius: 20px;
+  z-index: 1000;
+  display: none;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-shadow:
+    0 0 10px rgba(0, 195, 255, 0.9),
+    0 0 25px rgba(0, 195, 255, 0.5);
+  overflow: hidden;
+  animation: win-panel-shimmer 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes win-panel-shimmer {
+  0%   { box-shadow: 0 0 40px rgba(0, 195, 255, 0.2),  0 20px 60px rgba(0, 0, 0, 0.5); }
+  100% { box-shadow: 0 0 70px rgba(0, 195, 255, 0.45), 0 20px 60px rgba(0, 0, 0, 0.5); }
+}
+
+/* The moving border trace — a comet-like segment sweeping clockwise from top-left */
+#win-notification.running::before,
+#win-notification.running::after {
+  content: '';
+  display: block;
+  position: absolute;
+  border-radius: 20px;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+/* Head — bright leading edge with strong glow, changes colour mid-sweep */
+#win-notification.running::before {
+  outline: 4px solid #ffffff;
+  box-shadow:
+    0 0 6px 2px #ffffff,
+    0 0 14px 4px rgba(0, 195, 255, 0.9),
+    0 0 30px 6px rgba(0, 195, 255, 0.5);
+  animation-name: win-head;
+  animation-duration: 3s;
+}
+
+/* Tail — shorter fading segment behind the head */
+#win-notification.running::after {
+  outline: 3px solid rgba(180, 230, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 195, 255, 0.4);
+  animation-name: win-tail;
+  animation-duration: 3s;
+}
+
+/* Clockwise from top-left corner:
+   top edge (0→25%) → right edge (25→50%) → bottom edge (50→75%) → left edge (75→100%) */
+@keyframes win-head {
+  /* top-left → top-right */
+  0%    { left: 0;    top: 0;    width: 0;    height: 0;   outline-color: #00c3ff; }
+  2%    { left: 0;    top: 0;    width: 30%;  height: 0;   }
+  23%   { left: 70%;  top: 0;    width: 30%;  height: 0;   outline-color: #ffffff; }
+  25%   { left: 100%; top: 0;    width: 0;    height: 0;   }
+  /* right edge top → bottom */
+  27%   { left: 100%; top: 0;    width: 0;    height: 30%; }
+  48%   { left: 100%; top: 70%;  width: 0;    height: 30%; outline-color: #00c3ff; }
+  50%   { left: 100%; top: 100%; width: 0;    height: 0;   }
+  /* bottom-right → bottom-left */
+  52%   { left: 70%;  top: 100%; width: 30%;  height: 0;   }
+  73%   { left: 0;    top: 100%; width: 30%;  height: 0;   outline-color: #ffffff; }
+  75%   { left: 0;    top: 100%; width: 0;    height: 0;   }
+  /* left edge bottom → top */
+  77%   { left: 0;    top: 70%;  width: 0;    height: 30%; }
+  98%   { left: 0;    top: 0;    width: 0;    height: 30%; outline-color: #00c3ff; }
+  100%  { left: 0;    top: 0;    width: 0;    height: 0;   }
+}
+
+@keyframes win-tail {
+  0%    { left: 0;    top: 0;    width: 0;    height: 0;   }
+  /* trails ~12% behind the head */
+  2%    { left: 0;    top: 0;    width: 0;    height: 0;   }
+  14%   { left: 0;    top: 0;    width: 20%;  height: 0;   }
+  23%   { left: 50%;  top: 0;    width: 20%;  height: 0;   }
+  25%   { left: 70%;  top: 0;    width: 30%;  height: 0;   }
+  26%   { left: 100%; top: 0;    width: 0;    height: 0;   }
+  39%   { left: 100%; top: 0;    width: 0;    height: 20%; }
+  48%   { left: 100%; top: 50%;  width: 0;    height: 20%; }
+  50%   { left: 100%; top: 70%;  width: 0;    height: 30%; }
+  51%   { left: 100%; top: 100%; width: 0;    height: 0;   }
+  64%   { left: 70%;  top: 100%; width: 20%;  height: 0;   }
+  73%   { left: 20%;  top: 100%; width: 20%;  height: 0;   }
+  75%   { left: 0;    top: 100%; width: 0;    height: 0;   }
+  89%   { left: 0;    top: 70%;  width: 0;    height: 20%; }
+  98%   { left: 0;    top: 20%;  width: 0;    height: 20%; }
+  100%  { left: 0;    top: 0;    width: 0;    height: 0;   }
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  body { padding: 10px; }
+  .title-wrapper { margin-bottom: 12px; }
+  .game-board { gap: 10px; padding: 12px; }
+  .memory-card { min-height: 55px; }
+  #win-notification { padding: 26px 30px; }
+}
+
+@media (max-width: 320px) {
+  .game-board { gap: 8px; padding: 10px; }
+}

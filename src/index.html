@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="bg-container">
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+    <div class="firework-burst"></div>
+  </div>
+
+  <div class="title-wrapper">
+    <h1 class="title-glow">Memory Game</h1>
+    <div class="title-underline">
+      <span></span>
+      <em>match the pairs</em>
+      <span></span>
+    </div>
+  </div>
+
+  <section class="game-board" id="game-board" aria-label="Memory card game board">
+    <div class="memory-card" data-animal="squirrel" role="button" tabindex="0" aria-label="Squirrel card">
+      <img class="card-front" src="img/squirrel-svgrepo-com.svg" alt="Squirrel">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+    <div class="memory-card" data-animal="squirrel" role="button" tabindex="0" aria-label="Squirrel card">
+      <img class="card-front" src="img/squirrel-svgrepo-com.svg" alt="Squirrel">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+
+    <div class="memory-card" data-animal="elk" role="button" tabindex="0" aria-label="Elk card">
+      <img class="card-front" src="img/elk-svgrepo-com.svg" alt="Elk">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+    <div class="memory-card" data-animal="elk" role="button" tabindex="0" aria-label="Elk card">
+      <img class="card-front" src="img/elk-svgrepo-com.svg" alt="Elk">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+
+    <div class="memory-card" data-animal="jellyfish" role="button" tabindex="0" aria-label="Jellyfish card">
+      <img class="card-front" src="img/jellyfish-svgrepo-com.svg" alt="Jellyfish">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+    <div class="memory-card" data-animal="jellyfish" role="button" tabindex="0" aria-label="Jellyfish card">
+      <img class="card-front" src="img/jellyfish-svgrepo-com.svg" alt="Jellyfish">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+
+    <div class="memory-card" data-animal="whale" role="button" tabindex="0" aria-label="Whale card">
+      <img class="card-front" src="img/whale-svgrepo-com.svg" alt="Whale">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+    <div class="memory-card" data-animal="whale" role="button" tabindex="0" aria-label="Whale card">
+      <img class="card-front" src="img/whale-svgrepo-com.svg" alt="Whale">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+
+    <div class="memory-card" data-animal="cow" role="button" tabindex="0" aria-label="Cow card">
+      <img class="card-front" src="img/the-cow-svgrepo-com.svg" alt="Cow">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+    <div class="memory-card" data-animal="cow" role="button" tabindex="0" aria-label="Cow card">
+      <img class="card-front" src="img/the-cow-svgrepo-com.svg" alt="Cow">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+
+    <div class="memory-card" data-animal="rabbit" role="button" tabindex="0" aria-label="Rabbit card">
+      <img class="card-front" src="img/rabbit-svgrepo-com.svg" alt="Rabbit">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+    <div class="memory-card" data-animal="rabbit" role="button" tabindex="0" aria-label="Rabbit card">
+      <img class="card-front" src="img/rabbit-svgrepo-com.svg" alt="Rabbit">
+      <img class="card-back" src="img/circle-question-svgrepo-com.svg" alt="Question">
+    </div>
+  </section>
+
+  <script type="module" src="scripts.js"></script>
+</body>
+</html>
